@@ -30,7 +30,6 @@ client.once('open', () => {
   // Multi-process to utilize all CPU cores.
   if (!isDev && cluster.isMaster) {
     console.error(`Node cluster master ${process.pid} is running`);
-    z;
 
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {
@@ -44,7 +43,6 @@ client.once('open', () => {
         } exited: code ${code}, signal ${signal}`
       );
     });
-    zxzx;
   } else {
     const app = express();
     const db = client.db('katia_boticata');
