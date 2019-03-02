@@ -105,14 +105,51 @@ class App extends Component {
     });
   }
 
+  generateEncounters() {
+    return this.state.encounters.map(encounter => {
+      return <li>{encounter.text}</li>;
+    });
+  }
+
+  generateMonsters() {
+    return this.state.monsters.map(monster => {
+      return (
+        <ul>
+          <li>
+            Portrait:{' '}
+            <img
+              src={monster.thumbnail}
+              alt={monster.name}
+              style={{ height: 100, width: 100 }}
+            />
+          </li>
+          <li>Name: {monster.name}</li>
+          <li>HP: {monster.health}</li>
+          <li>XP value: {monster.xpValue}</li>
+          <li>Description: {monster.description}</li>
+          <li>Outro: {monster.outro}</li>
+        </ul>
+      );
+    });
+  }
+
   render() {
     return (
       <div className="App">
-        {/* <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-        </header> */}
+        <header className="App-header">
+          <h1>DRAGON SWORD</h1>
+        </header>
 
-        <main>{this.generateCharacters()}</main>
+        <main>
+          <h2>Characters</h2>
+          {this.generateCharacters()}
+
+          <h2>Monsters</h2>
+          {this.generateMonsters()}
+
+          <h2>Encounters</h2>
+          <ul>{this.generateEncounters()}</ul>
+        </main>
       </div>
     );
   }
