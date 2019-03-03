@@ -3,11 +3,20 @@ const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
+// Env vars
 require('dotenv').config();
+
+// DB
 const MongoClient = require('mongodb').MongoClient;
+
+// Discord
 const Discord = require('discord.js');
 const discordClient = new Discord.Client();
 
+// Auth
+const basicAuth = require('express-basic-auth');
+
+// Utils
 const { capitalizeFirstLetter } = require('./utils/utils');
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -60,6 +69,14 @@ client.once('open', () => {
 
       // Priority serve any static files.
       app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+
+      // Auth
+      const authMiddleware = basicAuth({
+        users: { admin: process.env.ADMIN_PASS },
+        unauthorizedResponse: getUnauthorizedResponse
+      });
+
+      // app.use(authMiddleware);
 
       // Answer API requests.
       app.get('/api', function(req, res) {
@@ -133,6 +150,7 @@ client.once('open', () => {
           .then(monsters => res.send(monsters));
       });
 
+      // Send all encounters
       app.get('/api/encounters', function(req, res) {
         const encounters = db.collection('encounters');
 
@@ -140,6 +158,11 @@ client.once('open', () => {
           .find()
           .toArray()
           .then(encounters => res.send(encounters));
+      });
+
+      // Authenticate user and return their credentials
+      app.get('/api/login', authMiddleware, function(req, res) {
+        res.send({ user: req.auth.user, pass: req.auth.password });
       });
 
       // All remaining requests return the React app, so it can handle routing.
@@ -159,3 +182,9 @@ client.once('open', () => {
     });
   }
 });
+
+function getUnauthorizedResponse(req) {
+  return req.auth
+    ? `user: ${req.auth.user} pass: ${req.auth.password} rejected`
+    : 'No credentials provided';
+}
