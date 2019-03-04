@@ -1,192 +1,53 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import CharacterCard from './components/cards/character-card';
-import MonsterCard from './components/cards/monster-card';
-import EncountersCard from './components/cards/encounters-card';
-
 // Routing
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
 // Components
+import { Container, Row } from 'react-bootstrap';
 import Login from './components/auth/login';
+import Admin from './components/admin/admin';
+import requireAuth from './components/auth/require-auth';
 
 // TODO: move these
 import { connect } from 'react-redux';
-import { login } from './components/auth/actions';
-
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark'
-  }
-});
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      characters: [],
-      games: [],
-      encounters: [],
-      monsters: []
-    };
-  }
-
-  componentDidMount() {
-    fetch('/api/characters')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(json => {
-        this.setState({
-          characters: json
-        });
-      });
-    fetch('/api/games')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(json => {
-        this.setState({
-          games: json
-        });
-      });
-    fetch('/api/encounters')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(json => {
-        this.setState({
-          encounters: json
-        });
-      });
-    fetch('/api/monsters')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(json => {
-        this.setState({
-          monsters: json
-        });
-      });
-
-    // TODO: move this to auth component
-    this.props.dispatch(login('ADMIN', 'ADMINPASS'));
-  }
-
-  generateCharacters() {
-    return this.state.characters.map((character, index) => {
-      return (
-        <Grid item sm={3} key={index}>
-          <CharacterCard character={character} key={index} />
-        </Grid>
-      );
-    });
-  }
-
-  generateEncounters() {
-    return this.state.encounters.map((encounter, index) => {
-      return (
-        <Grid item sm={4} key={index}>
-          <EncountersCard encounter={encounter} key={index} />
-        </Grid>
-      );
-    });
-  }
-
-  generateMonsters() {
-    return this.state.monsters.map((monster, index) => {
-      return (
-        <Grid item sm={4} key={index}>
-          <MonsterCard monster={monster} key={index} />
-        </Grid>
-      );
-    });
-  }
-
   render() {
     return (
       <Router>
-        <nav role="navigation">
-          <Switch>
-            {/* Home route */}
-            {/* <Route path='/' exact component={}></Route> */}
+        <Container>
+          <Row>
+            <nav role="navigation">
+              {/* TODO: move to a nav component */}
+              <Link to="/">
+                <span>Home</span>
+              </Link>
+              <Link to="/admin">
+                <span>Admin</span>
+              </Link>
+              {/* END TODO:  */}
+              <Switch>
+                {/* Home route */}
+                {/* <Route path='/' exact component={}></Route> */}
 
-            {/* Admin route */}
-            <Route path="/admin" exact component={Login} />
-          </Switch>
-          <Link to="/">Home</Link>
-          <Link to="/admin">Admin</Link>
-        </nav>
+                {/* Login route */}
+                <Route path="/login" exact component={Login} />
+
+                {/* Admin route */}
+                <Route path="/admin" exact component={requireAuth(Admin)} />
+              </Switch>
+            </nav>
+          </Row>
+        </Container>
       </Router>
     );
-    // return (
-    //   <Grid container spacing={24}>
-    //     <div
-    //       style={{
-    //         maxWidth: '70%',
-    //         marginLeft: 'auto',
-    //         marginRight: 'auto',
-    //         marginTop: '1em',
-    //         marginBottom: '1em'
-    //       }}
-    //     >
-    //       <MuiThemeProvider theme={theme}>
-    //         <Typography component="h2" variant="h2" align="center" gutterBottom>
-    //           DRAGON SWORD
-    //         </Typography>
-
-    //         {/* Monsters */}
-    //         <div style={{ marginBottom: '1em' }}>
-    //           <Typography component="h3" variant="h3" gutterBottom>
-    //             Monsters
-    //           </Typography>
-
-    //           <Grid container spacing={24}>
-    //             {this.generateMonsters()}
-    //           </Grid>
-    //         </div>
-
-    //         {/* Characters */}
-    //         <div style={{ marginBottom: '1em' }}>
-    //           <Typography component="h3" variant="h3" gutterBottom>
-    //             Characters
-    //           </Typography>
-    //           <Grid container spacing={24}>
-    //             {this.generateCharacters()}
-    //           </Grid>
-    //         </div>
-
-    //         {/* Encounters */}
-    //         <div style={{ marginBottom: '1em' }}>
-    //           <Typography component="h3" variant="h3" gutterBottom>
-    //             Encounters
-    //           </Typography>
-
-    //           <Grid container spacing={24}>
-    //             {this.generateEncounters()}
-    //           </Grid>
-    //         </div>
-    //       </MuiThemeProvider>
-    //     </div>
-    //   </Grid>
-    // );
   }
 }
 
-export default connect()(App);
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps)(App);

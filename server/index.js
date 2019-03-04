@@ -2,186 +2,92 @@ const express = require('express');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+const morgan = require('morgan');
 
 // Env vars
 require('dotenv').config();
 
 // DB
-const MongoClient = require('mongodb').MongoClient;
+const dbUtils = require('./db');
 
 // Discord
-const Discord = require('discord.js');
-const discordClient = new Discord.Client();
+const discord = require('./discord');
 
 // Auth
 const basicAuth = require('express-basic-auth');
 
-// Utils
-const { capitalizeFirstLetter } = require('./utils/utils');
+// Routers
+const monsterRouter = require('./routes/monster-routes');
+const characterRouter = require('./routes/character-routes');
+const gameRouter = require('./routes/game-routes');
+const encounterRouter = require('./routes/encounter-routes');
+const loginRouter = require('./routes/login-routes');
 
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
 
-// Create a new MongoClient
-const client = new MongoClient(
-  `mongodb://${process.env.DB_USER}:${
-    process.env.DB_PASS
-  }@ds151805.mlab.com:51805/katia_boticata`,
-  { useNewUrlParser: true }
-);
+// Multi-process to utilize all CPU cores.
+if (!isDev && cluster.isMaster) {
+  console.error(`Node cluster master ${process.pid} is running`);
 
-// Use connect method to connect to the Server
-client.connect(function(err) {
-  if (err) {
-    console.log('Mongo connection error');
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
   }
 
-  console.log('Connected successfully to Mongo');
+  cluster.on('exit', (worker, code, signal) => {
+    console.error(
+      `Node cluster worker ${
+        worker.process.pid
+      } exited: code ${code}, signal ${signal}`
+    );
+  });
+} else {
+  // When KatBot is signed into
+  discord.on('ready', () => {
+    console.log('Discord connected');
 
-  // Sign into KatBot
-  discordClient.login(process.env.TOKEN);
-});
+    const app = express();
 
-client.once('open', () => {
-  // Multi-process to utilize all CPU cores.
-  if (!isDev && cluster.isMaster) {
-    console.error(`Node cluster master ${process.pid} is running`);
+    // Logging
+    app.use(morgan('dev'));
 
-    // Fork workers.
-    for (let i = 0; i < numCPUs; i++) {
-      cluster.fork();
-    }
+    // Priority serve any static files.
+    app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-    cluster.on('exit', (worker, code, signal) => {
-      console.error(
-        `Node cluster worker ${
-          worker.process.pid
-        } exited: code ${code}, signal ${signal}`
+    // Auth
+    const authMiddleware = basicAuth({
+      users: { admin: process.env.ADMIN_PASS },
+      unauthorizedResponse: getUnauthorizedResponse
+    });
+
+    // Mount routers
+    app.use('/api/monsters', monsterRouter);
+    app.use('/api/characters', characterRouter);
+    app.use('/api/games', gameRouter);
+    app.use('/api/encounters', encounterRouter);
+    app.use('/api/login', authMiddleware, loginRouter);
+
+    // All remaining requests return the React app, so it can handle routing.
+    app.get('*', function(request, response) {
+      response.sendFile(
+        path.resolve(__dirname, '../react-ui/build', 'index.html')
       );
     });
-  } else {
-    // When KatBot is signed into
-    discordClient.on('ready', () => {
-      console.log('Discord connected');
 
-      const app = express();
-      const db = client.db('katia_boticata');
-
-      // Priority serve any static files.
-      app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
-
-      // Auth
-      const authMiddleware = basicAuth({
-        users: { admin: process.env.ADMIN_PASS },
-        unauthorizedResponse: getUnauthorizedResponse
-      });
-
-      // app.use(authMiddleware);
-
-      // Answer API requests.
-      app.get('/api', function(req, res) {
-        res.set('Content-Type', 'application/json');
-        res.send('{"message":"Hello from the custom server!"}');
-      });
-
-      // Send all characters
-      app.get('/api/characters', function(req, res) {
-        const characters = db.collection('characters');
-
-        // Get all of the characters
-        characters
-          .find()
-          .toArray()
-          .then(chars => {
-            // Create an array to hold characters that are merged with Discord usernames
-            const characterArray = [];
-
-            // For every character get the user's current Discord username
-            chars.forEach(char => {
-              // Get the guild of the character
-              const guild = discordClient.guilds.find(
-                guild => guild.id === char.guildID
-              );
-
-              // Get the name of the guild the character is on
-              const guildName = guild.name;
-
-              // Add the guild's name to the character object
-              char.guildName = guildName;
-
-              // Get the member snowflake for the plaayer
-              const member = guild.members.find(
-                member => member.id === char.memberID
-              );
-
-              // Add the username to the character object
-              char.username = member.user.username;
-
-              // Capitalize the class name and pronouns
-              char.class = capitalizeFirstLetter(char.class);
-              char.pronouns = capitalizeFirstLetter(char.pronouns);
-
-              // Push the modified character object with the username into the character array
-              characterArray.push(char);
-            });
-
-            // Send the new character array to the client
-            res.send(characterArray);
-          });
-      });
-
-      // Send all games
-      app.get('/api/games', function(req, res) {
-        const games = db.collection('games');
-
-        games
-          .find()
-          .toArray()
-          .then(games => res.send(games));
-      });
-
-      // Send all monsters
-      app.get('/api/monsters', function(req, res) {
-        const monsters = db.collection('monsters');
-
-        monsters
-          .find()
-          .toArray()
-          .then(monsters => res.send(monsters));
-      });
-
-      // Send all encounters
-      app.get('/api/encounters', function(req, res) {
-        const encounters = db.collection('encounters');
-
-        encounters
-          .find()
-          .toArray()
-          .then(encounters => res.send(encounters));
-      });
-
-      // Authenticate user and return their credentials
-      app.get('/api/login', authMiddleware, function(req, res) {
-        res.send({ user: req.auth.user, pass: req.auth.password });
-      });
-
-      // All remaining requests return the React app, so it can handle routing.
-      app.get('*', function(request, response) {
-        response.sendFile(
-          path.resolve(__dirname, '../react-ui/build', 'index.html')
-        );
-      });
-
-      app.listen(PORT, function() {
-        console.error(
-          `Node ${
-            isDev ? 'dev server' : 'cluster worker ' + process.pid
-          }: listening on port ${PORT}`
-        );
-      });
+    app.listen(PORT, function() {
+      console.error(
+        `Node ${
+          isDev ? 'dev server' : 'cluster worker ' + process.pid
+        }: listening on port ${PORT}`
+      );
     });
-  }
-});
+  });
+}
+
+if (require.main === module) {
+  dbUtils.dbConnect();
+}
 
 function getUnauthorizedResponse(req) {
   return req.auth

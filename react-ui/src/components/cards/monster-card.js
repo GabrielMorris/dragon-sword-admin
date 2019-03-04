@@ -2,41 +2,32 @@
 import React from 'react';
 
 // Components
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
+import { Card, ListGroup } from 'react-bootstrap';
 
 export default function MonsterCard(props) {
   return (
     <Card>
-      <CardMedia
-        component="img"
-        alt={props.monster.name}
+      <Card.Img
+        variant="top"
+        src={props.monster.thumbnail}
         style={{
-          height: 100,
-          width: 100,
+          height: '100px',
+          width: '100px',
           marginLeft: 'auto',
           marginRight: 'auto'
         }}
-        image={props.monster.thumbnail}
-        title={props.monster.name}
       />
 
-      <CardContent>
-        <Typography variant="h5" component="h2">
-          {props.monster.name}
-        </Typography>
+      <Card.Header as="h5">{props.monster.name}</Card.Header>
 
-        <Typography component="li">HP: {props.monster.health}</Typography>
-        <Typography component="li">
-          XP value: {props.monster.xpValue}
-        </Typography>
-        <Typography component="li">
+      <ListGroup>
+        <ListGroup.Item>HP: {props.monster.health}</ListGroup.Item>
+        <ListGroup.Item>XP value: {props.monster.xpValue}</ListGroup.Item>
+        <ListGroup.Item>
           Description: {props.monster.description}
-        </Typography>
-        <Typography component="li">Outro: {props.monster.outro}</Typography>
-      </CardContent>
+        </ListGroup.Item>
+        <ListGroup.Item>Outro: {props.monster.outro}</ListGroup.Item>
+      </ListGroup>
     </Card>
   );
 }

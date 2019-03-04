@@ -2,33 +2,34 @@
 import React from 'react';
 
 // Components
-import Typography from '@material-ui/core/Typography';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+import { Card, ListGroup } from 'react-bootstrap';
+
+// Utils
+import { calculateStats, getCharacterLevel } from '../../utils/game-utils';
 
 export default function CharacterCard(props) {
+  if (!props.character) return null;
+
+  const level = getCharacterLevel(props.character);
+  const stats = calculateStats(props.character, level);
+
   return (
     <Card>
-      <CardContent>
-        <Typography variant="h5" component="h2" gutterBottom>
-          {props.character.username}
-        </Typography>
+      <Card.Header as="h5" className="text-center">
+        {props.character.username}
+      </Card.Header>
 
-        <Typography component="li">Class: {props.character.class}</Typography>
-        <Typography component="li">
-          Guild: {props.character.guildName}
-        </Typography>
-        <Typography component="li">XP: {props.character.experience}</Typography>
-        <Typography component="li">HP: {props.character.health}</Typography>
-        <Typography component="li">MP: {props.character.mana}</Typography>
-        <Typography component="li">STR: {props.character.str}</Typography>
-        <Typography component="li">DEF: {props.character.def}</Typography>
-        <Typography component="li">AGI: {props.character.agi}</Typography>
-        <Typography component="li">LUCK: {props.character.luck}</Typography>
-        <Typography component="li">
-          Pronouns: {props.character.pronouns}
-        </Typography>
-      </CardContent>
+      <ListGroup>
+        <ListGroup.Item>Class: {props.character.class}</ListGroup.Item>
+        <ListGroup.Item>Pronouns: {props.character.pronouns}</ListGroup.Item>
+        <ListGroup.Item>Guild: {props.character.guildName}</ListGroup.Item>
+        <ListGroup.Item>XP: {props.character.experience}</ListGroup.Item>
+        <ListGroup.Item>HP: {stats.HP}</ListGroup.Item>
+        <ListGroup.Item>MP: {stats.MP}</ListGroup.Item>
+        <ListGroup.Item>DEF: {stats.DEF}</ListGroup.Item>
+        <ListGroup.Item>AGI: {stats.AGI}</ListGroup.Item>
+        <ListGroup.Item>LUCK: {stats.LUCK}</ListGroup.Item>
+      </ListGroup>
     </Card>
   );
 }
