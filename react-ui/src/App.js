@@ -27,6 +27,9 @@ class App extends Component {
               <Link to="/admin">
                 <span>Admin</span>
               </Link>
+            </nav>
+
+            <main>
               {/* END TODO:  */}
               <Switch>
                 {/* Home route */}
@@ -38,7 +41,7 @@ class App extends Component {
                 {/* Admin route */}
                 <Route path="/admin" exact component={requireAuth(Admin)} />
               </Switch>
-            </nav>
+            </main>
           </Row>
         </Container>
       </Router>

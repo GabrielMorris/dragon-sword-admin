@@ -14,7 +14,8 @@ export default function MonsterCard(props) {
           height: '100px',
           width: '100px',
           marginLeft: 'auto',
-          marginRight: 'auto'
+          marginRight: 'auto',
+          display: 'block'
         }}
       />
 

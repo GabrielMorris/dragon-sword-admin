@@ -9,9 +9,7 @@ import * as actions from './actions';
 import CharacterCard from '../cards/character-card';
 import MonsterCard from '../cards/monster-card';
 import EncountersCard from '../cards/encounters-card';
-import { Modal } from 'react-bootstrap';
-
-// Styles
+import { Modal, Row, Col, CardColumns } from 'react-bootstrap';
 
 export class Admin extends React.Component {
   constructor(props) {
@@ -66,7 +64,7 @@ export class Admin extends React.Component {
     return (
       <div
         style={{
-          maxWidth: '70%',
+          // maxWidth: '70%',
           marginLeft: 'auto',
           marginRight: 'auto',
           marginTop: '1em',
@@ -81,20 +79,23 @@ export class Admin extends React.Component {
 
           <button onClick={() => this._handleModalOpen()}>ADD MONSTER</button>
 
-          {this.generateMonsters()}
+          <CardColumns>{this.generateMonsters()}</CardColumns>
         </div>
 
         {/* Characters */}
         <div style={{ marginBottom: '1em' }}>
           <h3>Characters</h3>
-          {this.generateCharacters()}
+
+          <CardColumns>{this.generateCharacters()}</CardColumns>
         </div>
 
         {/* Encounters */}
         <div style={{ marginBottom: '1em' }}>
           <h3>Encounters</h3>
 
-          {this.generateEncounters()}
+          <CardColumns style={{ width: '100%' }}>
+            {this.generateEncounters()}
+          </CardColumns>
         </div>
 
         <Modal
