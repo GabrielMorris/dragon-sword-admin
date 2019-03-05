@@ -25,7 +25,7 @@ router.post('/', authMiddleware, function(req, res) {
 
     // Otherwise create the new monster
     monsters
-      .create(req.body)
+      .create(req.body.monster)
       .then(response => res.send(response))
       .catch(err =>
         res.status(500).send({ error: true, message: err.message })

@@ -1,5 +1,6 @@
 import * as types from './actionTypes';
 import { API_BASE_URL } from '../../config';
+import base64 from 'base-64';
 
 /* === Monsters === */
 export const fetchMonsters = () => dispatch => {
@@ -29,6 +30,37 @@ export const monstersFailure = error => ({
   type: types.FETCH_MONSTERS_FAILURE,
   error
 });
+
+export const newMonster = (monster, auth) => dispatch => {
+  dispatch(newMonsterRequest());
+
+  let headers = new Headers();
+  headers.append(
+    'Authorization',
+    'Basic ' + base64.encode(auth.user + ':' + auth.password)
+  );
+  headers.append('Content-Type', 'application/json');
+
+  fetch(`${API_BASE_URL}/monsters`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      monster
+    })
+  }).then(response => {
+    console.log(response);
+    // TODO: finish this
+  });
+};
+
+export const newMonsterRequest = () => ({
+  type: types.NEW_MONSTER_REQUEST
+});
+
+// TODO: finish these stubs
+export const newMonsterSuccess = monster => ({});
+
+export const newMonsterFailure = error => ({});
 
 /* === Characters === */
 export const fetchCharacters = () => dispatch => {

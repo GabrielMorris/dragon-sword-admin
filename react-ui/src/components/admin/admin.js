@@ -6,10 +6,11 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 
 // Components
-import CharacterCard from '../cards/character-card';
-import MonsterCard from '../cards/monster-card';
-import EncountersCard from '../cards/encounters-card';
-import { Modal, CardColumns, Tabs, Tab, Button } from 'react-bootstrap';
+import { Modal, Tabs, Tab, Button, Form } from 'react-bootstrap';
+
+import MonstersContainer from './monsters/monsters-container';
+import EncountersContainer from './encounters/encounters-container';
+import CharactersContainer from './characters/characters-container';
 
 export class Admin extends React.Component {
   constructor(props) {
@@ -21,11 +22,20 @@ export class Admin extends React.Component {
       games: [],
       encounters: [],
       monsters: [],
-      modalOpen: false
+      modalOpen: false,
+      // TODO: move these to the monster modal
+      name: '',
+      HP: '',
+      xpValue: '',
+      thumbnail: '',
+      description: '',
+      outro: '',
+      boss: false
     };
 
-    this._handleModalOpen = this._handleModalOpen.bind(this);
-    this._handleModalClose = this._handleModalClose.bind(this);
+    this.handleModalOpen = this.handleModalOpen.bind(this);
+    this.handleModalClose = this.handleModalClose.bind(this);
+    this._handleChange = this._handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -34,73 +44,16 @@ export class Admin extends React.Component {
     this.props.dispatch(actions.fetchEncounters());
   }
 
-  generateCharacterCards() {
-    return (
-      <div style={{ marginBottom: '1em' }}>
-        <h3>Characters</h3>
-
-        <CardColumns>{this.generateCharacters()}</CardColumns>
-      </div>
-    );
-  }
-
-  generateCharacters() {
-    return this.props.characters.map((character, index) => {
-      return <CharacterCard character={character} key={index} />;
-    });
-  }
-
-  generateEncounterCards() {
-    return (
-      <div style={{ marginBottom: '1em' }}>
-        <h3>Encounters</h3>
-
-        <CardColumns style={{ width: '100%' }}>
-          {this.generateEncounters()}
-        </CardColumns>
-      </div>
-    );
-  }
-
-  generateEncounters() {
-    return this.props.encounters.map((encounter, index) => {
-      return <EncountersCard encounter={encounter} key={index} />;
-    });
-  }
-
-  generateMonsterCards() {
-    return (
-      <div style={{ marginBottom: '1em' }}>
-        <h3>Monsters</h3>
-
-        <Button
-          variant="primary"
-          onClick={this._handleModalOpen}
-          style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
-        >
-          Add Monster
-        </Button>
-
-        <CardColumns style={{ marginTop: '1em' }}>
-          {this.generateMonsters()}
-        </CardColumns>
-      </div>
-    );
-  }
-
-  generateMonsters() {
-    return this.props.monsters.map((monster, index) => {
-      return <MonsterCard monster={monster} key={index} />;
-    });
-  }
-
-  _handleModalOpen() {
+  handleModalOpen() {
     this.setState({ modalOpen: true });
-    console.log(this.state);
   }
 
-  _handleModalClose() {
+  handleModalClose() {
     this.setState({ modalOpen: false });
+  }
+
+  _handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
   }
 
   render() {
@@ -121,15 +74,27 @@ export class Admin extends React.Component {
           onSelect={tab => this.setState({ focusedTab: tab })}
         >
           <Tab title="Monsters" eventKey="monsters">
-            {this.generateMonsterCards()}
+            <Button
+              variant="primary"
+              onClick={this.handleModalOpen}
+              style={{
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                display: 'block'
+              }}
+            >
+              Add Monster
+            </Button>
+
+            <MonstersContainer />
           </Tab>
 
           <Tab title="Characters" eventKey="characters">
-            {this.generateCharacterCards()}
+            <CharactersContainer />
           </Tab>
 
           <Tab title="Encounters" eventKey="encounters">
-            {this.generateEncounterCards()}
+            <EncountersContainer />
           </Tab>
         </Tabs>
 
@@ -137,21 +102,136 @@ export class Admin extends React.Component {
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           show={this.state.modalOpen}
-          onHide={this._handleModalClose}
+          onHide={this.handleModalClose}
           centered
         >
           <Modal.Header closeButton>
             <Modal.Title id="contained-modal-title-vcenter">
-              Modal heading
+              New Monster
             </Modal.Title>
           </Modal.Header>
+
           <Modal.Body>
-            <h4>Centered Modal</h4>
-            <p>
-              Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-              dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-              ac consectetur ac, vestibulum at eros.
-            </p>
+            {/* Form */}
+            <Form
+              onSubmit={event => {
+                event.preventDefault();
+
+                const health = Number(this.state.HP);
+                const xpValue = Number(this.state.xpValue);
+                const isBoss = this.state.boss === 'true';
+
+                const monsterObj = {
+                  name: this.state.name,
+                  health: health,
+                  xpValue: xpValue,
+                  thumbnail: this.state.thumbnail,
+                  description: this.state.description,
+                  outro: this.state.outro,
+                  isBoss: isBoss
+                };
+
+                const user = {
+                  user: this.props.auth.user,
+                  password: this.props.auth.password
+                };
+
+                console.log(monsterObj);
+
+                // TODO: make this close the form and refresh the admin
+                this.props.dispatch(actions.newMonster(monsterObj, user));
+              }}
+            >
+              <Form.Group controlId="newMonsterForm">
+                {/* Name */}
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={this.state.name}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* HP */}
+                <Form.Label>Health</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="HP"
+                  placeholder="HP"
+                  value={this.state.HP}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* XP */}
+                <Form.Label>XP value</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="xpValue"
+                  placeholder="XP value"
+                  value={this.state.xpValue}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* Thumb */}
+                <Form.Label>Image</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="thumbnail"
+                  placeholder="Image"
+                  value={this.state.thumbnail}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* Description */}
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  name="description"
+                  placeholder="Description"
+                  value={this.state.description}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* Outro */}
+                <Form.Label>Outro</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  name="outro"
+                  placeholder="Outro"
+                  value={this.state.outro}
+                  onChange={this._handleChange}
+                  required
+                />
+
+                {/* Boss? */}
+                <Form.Label>Boss?</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="boss"
+                  placeholder="false"
+                  value={this.state.boss}
+                  onChange={this._handleChange}
+                  required
+                >
+                  <option value={true}>true</option>
+                  <option value={false}>false</option>
+                </Form.Control>
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  style={{ marginTop: '1em' }}
+                >
+                  Submit
+                </Button>
+              </Form.Group>
+            </Form>
           </Modal.Body>
           <Modal.Footer />
         </Modal>
@@ -163,7 +243,8 @@ export class Admin extends React.Component {
 const mapStateToProps = state => ({
   monsters: state.admin.monsters,
   characters: state.admin.characters,
-  encounters: state.admin.encounters
+  encounters: state.admin.encounters,
+  auth: state.auth
 });
 
 export default connect(mapStateToProps)(Admin);

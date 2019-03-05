@@ -4,6 +4,9 @@ import React from 'react';
 // Components
 import { Card, ListGroup } from 'react-bootstrap';
 
+// Utils
+import { capitalizeFirstLetter } from '../../utils/game-utils';
+
 export default function MonsterCard(props) {
   return (
     <Card>
@@ -19,13 +22,15 @@ export default function MonsterCard(props) {
         }}
       />
 
-      <Card.Header as="h5">{props.monster.name}</Card.Header>
+      <Card.Header as="h4" className="text-center">
+        {props.monster.name}
+      </Card.Header>
 
       <ListGroup>
         <ListGroup.Item>HP: {props.monster.health}</ListGroup.Item>
         <ListGroup.Item>XP value: {props.monster.xpValue}</ListGroup.Item>
         <ListGroup.Item>
-          Description: {props.monster.description}
+          Description: {capitalizeFirstLetter(props.monster.description)}
         </ListGroup.Item>
         <ListGroup.Item>Outro: {props.monster.outro}</ListGroup.Item>
       </ListGroup>
