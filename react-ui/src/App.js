@@ -28,21 +28,21 @@ class App extends Component {
                 <span>Admin</span>
               </Link>
             </nav>
-
-            <main>
-              {/* END TODO:  */}
-              <Switch>
-                {/* Home route */}
-                {/* <Route path='/' exact component={}></Route> */}
-
-                {/* Login route */}
-                <Route path="/login" exact component={Login} />
-
-                {/* Admin route */}
-                <Route path="/admin" exact component={requireAuth(Admin)} />
-              </Switch>
-            </main>
           </Row>
+
+          <main>
+            {/* END TODO:  */}
+            <Switch>
+              {/* Home route */}
+              {/* <Route path='/' exact component={}></Route> */}
+
+              {/* Login route */}
+              <Route path="/login" exact component={Login} />
+
+              {/* Admin route */}
+              <Route path="/admin" exact component={requireAuth(Admin)} />
+            </Switch>
+          </main>
         </Container>
       </Router>
     );

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 
 // Components
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Row, Container } from 'react-bootstrap';
 
 // Styles
 
@@ -48,33 +48,35 @@ export class Login extends React.Component {
 
   render() {
     return (
-      <Form onSubmit={this._handleSubmit}>
-        <Form.Group controlId="usernameControl">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="text"
-            name="user"
-            placeholder="Username"
-            value={this.state.user}
-            onChange={this._handleChange}
-          />
-        </Form.Group>
+      <Row className="justify-content-md-center">
+        <Form onSubmit={this._handleSubmit}>
+          <Form.Group controlId="usernameControl">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              name="user"
+              placeholder="Username"
+              value={this.state.user}
+              onChange={this._handleChange}
+            />
+          </Form.Group>
 
-        <Form.Group controlId="passwordControl">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this._handleChange}
-          />
-        </Form.Group>
+          <Form.Group controlId="passwordControl">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this._handleChange}
+            />
+          </Form.Group>
 
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
+      </Row>
     );
   }
 }

@@ -14,7 +14,7 @@ const dbUtils = require('./db');
 const discord = require('./discord');
 
 // Auth
-const basicAuth = require('express-basic-auth');
+const authMiddleware = require('./middleware/auth');
 
 // Routers
 const monsterRouter = require('./routes/monster-routes');
@@ -55,11 +55,8 @@ if (!isDev && cluster.isMaster) {
     // Priority serve any static files.
     app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
-    // Auth
-    const authMiddleware = basicAuth({
-      users: { admin: process.env.ADMIN_PASS },
-      unauthorizedResponse: getUnauthorizedResponse
-    });
+    // Parse request body
+    app.use(express.json());
 
     // Mount routers
     app.use('/api/monsters', monsterRouter);
@@ -87,10 +84,4 @@ if (!isDev && cluster.isMaster) {
 
 if (require.main === module) {
   dbUtils.dbConnect();
-}
-
-function getUnauthorizedResponse(req) {
-  return req.auth
-    ? `user: ${req.auth.user} pass: ${req.auth.password} rejected`
-    : 'No credentials provided';
 }

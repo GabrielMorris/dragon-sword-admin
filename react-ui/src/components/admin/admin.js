@@ -9,13 +9,14 @@ import * as actions from './actions';
 import CharacterCard from '../cards/character-card';
 import MonsterCard from '../cards/monster-card';
 import EncountersCard from '../cards/encounters-card';
-import { Modal, Row, Col, CardColumns } from 'react-bootstrap';
+import { Modal, CardColumns, Tabs, Tab, Button } from 'react-bootstrap';
 
 export class Admin extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      focusedTab: 'monsters',
       characters: [],
       games: [],
       encounters: [],
@@ -33,16 +34,58 @@ export class Admin extends React.Component {
     this.props.dispatch(actions.fetchEncounters());
   }
 
+  generateCharacterCards() {
+    return (
+      <div style={{ marginBottom: '1em' }}>
+        <h3>Characters</h3>
+
+        <CardColumns>{this.generateCharacters()}</CardColumns>
+      </div>
+    );
+  }
+
   generateCharacters() {
     return this.props.characters.map((character, index) => {
       return <CharacterCard character={character} key={index} />;
     });
   }
 
+  generateEncounterCards() {
+    return (
+      <div style={{ marginBottom: '1em' }}>
+        <h3>Encounters</h3>
+
+        <CardColumns style={{ width: '100%' }}>
+          {this.generateEncounters()}
+        </CardColumns>
+      </div>
+    );
+  }
+
   generateEncounters() {
     return this.props.encounters.map((encounter, index) => {
       return <EncountersCard encounter={encounter} key={index} />;
     });
+  }
+
+  generateMonsterCards() {
+    return (
+      <div style={{ marginBottom: '1em' }}>
+        <h3>Monsters</h3>
+
+        <Button
+          variant="primary"
+          onClick={this._handleModalOpen}
+          style={{ marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+        >
+          Add Monster
+        </Button>
+
+        <CardColumns style={{ marginTop: '1em' }}>
+          {this.generateMonsters()}
+        </CardColumns>
+      </div>
+    );
   }
 
   generateMonsters() {
@@ -64,7 +107,6 @@ export class Admin extends React.Component {
     return (
       <div
         style={{
-          // maxWidth: '70%',
           marginLeft: 'auto',
           marginRight: 'auto',
           marginTop: '1em',
@@ -73,30 +115,23 @@ export class Admin extends React.Component {
       >
         <h1 className="text-center">DRAGON SWORD</h1>
 
-        {/* Monsters */}
-        <div style={{ marginBottom: '1em' }}>
-          <h3>Monsters</h3>
+        <Tabs
+          id="adminTabs"
+          activeKey={this.state.focusedTab}
+          onSelect={tab => this.setState({ focusedTab: tab })}
+        >
+          <Tab title="Monsters" eventKey="monsters">
+            {this.generateMonsterCards()}
+          </Tab>
 
-          <button onClick={() => this._handleModalOpen()}>ADD MONSTER</button>
+          <Tab title="Characters" eventKey="characters">
+            {this.generateCharacterCards()}
+          </Tab>
 
-          <CardColumns>{this.generateMonsters()}</CardColumns>
-        </div>
-
-        {/* Characters */}
-        <div style={{ marginBottom: '1em' }}>
-          <h3>Characters</h3>
-
-          <CardColumns>{this.generateCharacters()}</CardColumns>
-        </div>
-
-        {/* Encounters */}
-        <div style={{ marginBottom: '1em' }}>
-          <h3>Encounters</h3>
-
-          <CardColumns style={{ width: '100%' }}>
-            {this.generateEncounters()}
-          </CardColumns>
-        </div>
+          <Tab title="Encounters" eventKey="encounters">
+            {this.generateEncounterCards()}
+          </Tab>
+        </Tabs>
 
         <Modal
           size="lg"
