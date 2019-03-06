@@ -20,9 +20,19 @@ export class MonstersContainer extends React.Component {
   }
 
   generateMonsters() {
-    return this.props.monsters.map((monster, index) => {
+    return this._sortMonsters(this.props.monsters).map((monster, index) => {
       return <MonsterCard monster={monster} key={index} />;
     });
+  }
+
+  _sortMonsters(monsters) {
+    if (monsters.length > 0) {
+      return monsters.sort((a, b) => {
+        return b.health - a.health;
+      });
+    }
+
+    return monsters;
   }
 
   render() {
