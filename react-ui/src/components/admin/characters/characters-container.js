@@ -18,9 +18,21 @@ export class CharactersContainer extends React.Component {
   }
 
   generateCharacters() {
-    return this.props.characters.map((character, index) => {
-      return <CharacterCard character={character} key={index} />;
-    });
+    return this._sortCharacters(this.props.characters).map(
+      (character, index) => {
+        return <CharacterCard character={character} key={index} />;
+      }
+    );
+  }
+
+  _sortCharacters(characters) {
+    if (characters.length > 0) {
+      return characters.sort((a, b) => {
+        return b.experience - a.experience;
+      });
+    }
+
+    return characters;
   }
 
   render() {
