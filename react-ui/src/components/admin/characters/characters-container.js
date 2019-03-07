@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 // Components
 import CharacterCard from '../../cards/character-card';
-import { CardColumns, Button } from 'react-bootstrap';
+import { CardColumns } from 'react-bootstrap';
 
 export class CharactersContainer extends React.Component {
   generateCharacterCards() {

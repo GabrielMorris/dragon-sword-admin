@@ -67,6 +67,42 @@ export default function authReducer(state = initialState, action) {
         error: action.error
       });
     }
+    case types.NEW_MONSTER_REQUEST: {
+      return Object.assign({}, state, {
+        isFetching: true,
+        error: null
+      });
+    }
+    case types.NEW_MONSTER_SUCCESS: {
+      return Object.assign({}, state, {
+        isFetching: false,
+        error: null
+      });
+    }
+    case types.NEW_MONSTER_FAILURE: {
+      return Object.assign({}, state, {
+        isFetching: false,
+        error: action.error
+      });
+    }
+    case types.NEW_ENCOUNTER_REQUEST: {
+      return Object.assign({}, state, {
+        isFetching: true,
+        error: null
+      });
+    }
+    case types.NEW_ENCOUNTER_SUCCESS: {
+      return Object.assign({}, state, {
+        isFetching: false,
+        error: null
+      });
+    }
+    case types.NEW_ENCOUNTER_FAILURE: {
+      return Object.assign({}, state, {
+        isFetching: false,
+        error: action.error
+      });
+    }
     default:
       return state;
   }

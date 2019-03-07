@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 // Components
 import EncountersCard from '../../cards/encounters-card';
-import { CardColumns, Button } from 'react-bootstrap';
+import { CardColumns } from 'react-bootstrap';
 
 export class EncountersContainer extends React.Component {
   generateEncounterCards() {

@@ -49,7 +49,12 @@ export const newMonster = (monster, auth) => dispatch => {
     })
   }).then(response => {
     console.log(response);
-    // TODO: finish this
+    if (!response.ok) {
+      dispatch(newMonsterFailure('Error in newMonster action'));
+    }
+
+    dispatch(newMonsterSuccess());
+    dispatch(fetchMonsters());
   });
 };
 
@@ -57,10 +62,14 @@ export const newMonsterRequest = () => ({
   type: types.NEW_MONSTER_REQUEST
 });
 
-// TODO: finish these stubs
-export const newMonsterSuccess = monster => ({});
+export const newMonsterSuccess = () => ({
+  type: types.NEW_MONSTER_SUCCESS
+});
 
-export const newMonsterFailure = error => ({});
+export const newMonsterFailure = error => ({
+  type: types.NEW_MONSTER_FAILURE,
+  error
+});
 
 /* === Characters === */
 export const fetchCharacters = () => dispatch => {
@@ -117,5 +126,43 @@ export const encountersSuccess = encounters => ({
 
 export const encountersFailure = error => ({
   type: types.FETCH_ENCOUNTERS_FAILURE,
+  error
+});
+
+export const newEncounter = (encounter, auth) => dispatch => {
+  dispatch(newEncounterRequest());
+
+  let headers = new Headers();
+  headers.append(
+    'Authorization',
+    'Basic ' + base64.encode(auth.user + ':' + auth.password)
+  );
+  headers.append('Content-Type', 'application/json');
+
+  fetch(`${API_BASE_URL}/encounters`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(encounter)
+  }).then(response => {
+    console.log(response);
+    if (!response.ok) {
+      dispatch(newEncounterFailure('Error in newEncounter action'));
+    }
+
+    dispatch(newEncounterSuccess());
+    dispatch(fetchEncounters());
+  });
+};
+
+export const newEncounterRequest = () => ({
+  type: types.NEW_ENCOUNTER_REQUEST
+});
+
+export const newEncounterSuccess = () => ({
+  type: types.NEW_ENCOUNTER_SUCCESS
+});
+
+export const newEncounterFailure = error => ({
+  type: types.NEW_ENCOUNTER_FAILURE,
   error
 });

@@ -6,11 +6,17 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 
 // Components
-import { Modal, Tabs, Tab, Button, Form } from 'react-bootstrap';
+import { Modal, Tabs, Tab, Button } from 'react-bootstrap';
 
 import MonstersContainer from './monsters/monsters-container';
 import EncountersContainer from './encounters/encounters-container';
 import CharactersContainer from './characters/characters-container';
+
+import NewEncounterForm from './forms/new-encounter-form';
+import NewMonsterForm from './forms/new-monster-form';
+
+// Utils
+import { capitalizeFirstLetter } from '../../utils/game-utils';
 
 export class Admin extends React.Component {
   constructor(props) {
@@ -30,7 +36,9 @@ export class Admin extends React.Component {
       thumbnail: '',
       description: '',
       outro: '',
-      boss: false
+      boss: false,
+      // TODO: move these to the encounter modal
+      text: ''
     };
 
     this.handleModalOpen = this.handleModalOpen.bind(this);
@@ -44,6 +52,28 @@ export class Admin extends React.Component {
     this.props.dispatch(actions.fetchEncounters());
   }
 
+  /* Form generators */
+  generateModalForm() {
+    if (this.state.focusedTab === 'monsters') {
+      return (
+        <NewMonsterForm
+          state={this.state}
+          closeModal={this.handleModalClose}
+          handleChange={this._handleChange}
+        />
+      );
+    } else if (this.state.focusedTab === 'encounters') {
+      return (
+        <NewEncounterForm
+          state={this.state}
+          closeModal={this.handleModalClose}
+          handleChange={this._handleChange}
+        />
+      );
+    }
+  }
+
+  /* Handlers */
   handleModalOpen() {
     this.setState({ modalOpen: true });
   }
@@ -73,10 +103,13 @@ export class Admin extends React.Component {
           activeKey={this.state.focusedTab}
           onSelect={tab => this.setState({ focusedTab: tab })}
         >
+          {/* Monsters tab */}
           <Tab title="Monsters" eventKey="monsters">
             <Button
               variant="primary"
-              onClick={this.handleModalOpen}
+              onClick={() => {
+                this.handleModalOpen();
+              }}
               style={{
                 marginLeft: 'auto',
                 marginRight: 'auto',
@@ -89,11 +122,26 @@ export class Admin extends React.Component {
             <MonstersContainer />
           </Tab>
 
+          {/* Characters tab */}
           <Tab title="Characters" eventKey="characters">
             <CharactersContainer />
           </Tab>
 
+          {/* Encounters tab */}
           <Tab title="Encounters" eventKey="encounters">
+            <Button
+              variant="primary"
+              onClick={() => {
+                this.handleModalOpen();
+              }}
+              style={{
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                display: 'block'
+              }}
+            >
+              Add Encounter
+            </Button>
             <EncountersContainer />
           </Tab>
         </Tabs>
@@ -107,132 +155,11 @@ export class Admin extends React.Component {
         >
           <Modal.Header closeButton>
             <Modal.Title id="contained-modal-title-vcenter">
-              New Monster
+              New {capitalizeFirstLetter(this.state.focusedTab)}
             </Modal.Title>
           </Modal.Header>
 
-          <Modal.Body>
-            {/* Form */}
-            <Form
-              onSubmit={event => {
-                event.preventDefault();
-
-                const health = Number(this.state.HP);
-                const xpValue = Number(this.state.xpValue);
-                const isBoss = this.state.boss === 'true';
-
-                const monsterObj = {
-                  name: this.state.name,
-                  health: health,
-                  xpValue: xpValue,
-                  thumbnail: this.state.thumbnail,
-                  description: this.state.description,
-                  outro: this.state.outro,
-                  isBoss: isBoss
-                };
-
-                const user = {
-                  user: this.props.auth.user,
-                  password: this.props.auth.password
-                };
-
-                console.log(monsterObj);
-
-                // TODO: make this close the form and refresh the admin
-                this.props.dispatch(actions.newMonster(monsterObj, user));
-              }}
-            >
-              <Form.Group controlId="newMonsterForm">
-                {/* Name */}
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={this.state.name}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* HP */}
-                <Form.Label>Health</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="HP"
-                  placeholder="HP"
-                  value={this.state.HP}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* XP */}
-                <Form.Label>XP value</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="xpValue"
-                  placeholder="XP value"
-                  value={this.state.xpValue}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* Thumb */}
-                <Form.Label>Image</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="thumbnail"
-                  placeholder="Image"
-                  value={this.state.thumbnail}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* Description */}
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="description"
-                  placeholder="Description"
-                  value={this.state.description}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* Outro */}
-                <Form.Label>Outro</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  name="outro"
-                  placeholder="Outro"
-                  value={this.state.outro}
-                  onChange={this._handleChange}
-                  required
-                />
-
-                {/* Boss? */}
-                <Form.Label>Boss?</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="boss"
-                  placeholder="false"
-                  value={this.state.boss}
-                  onChange={this._handleChange}
-                  required
-                >
-                  <option value={true}>true</option>
-                  <option value={false}>false</option>
-                </Form.Control>
-
-                <Button
-                  variant="primary"
-                  type="submit"
-                  style={{ marginTop: '1em' }}
-                >
-                  Submit
-                </Button>
-              </Form.Group>
-            </Form>
-          </Modal.Body>
+          <Modal.Body>{this.generateModalForm()}</Modal.Body>
           <Modal.Footer />
         </Modal>
       </div>

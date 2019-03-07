@@ -30,6 +30,8 @@ export function getCharacterLevel(character) {
     ) {
       return true;
     }
+
+    return false;
   });
 }
 
