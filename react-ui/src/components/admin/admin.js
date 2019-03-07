@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 
 // Components
-import { Modal, Tabs, Tab, Button } from 'react-bootstrap';
+import { Modal, Tabs, Tab, Button, Container } from 'react-bootstrap';
 
 import MonstersContainer from './monsters/monsters-container';
 import EncountersContainer from './encounters/encounters-container';
@@ -88,81 +88,85 @@ export class Admin extends React.Component {
 
   render() {
     return (
-      <div
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: '1em',
-          marginBottom: '1em'
-        }}
-      >
-        <h1 className="text-center">DRAGON SWORD</h1>
-
-        <Tabs
-          id="adminTabs"
-          activeKey={this.state.focusedTab}
-          onSelect={tab => this.setState({ focusedTab: tab })}
+      <Container>
+        <div
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '1em',
+            marginBottom: '1em'
+          }}
         >
-          {/* Monsters tab */}
-          <Tab title="Monsters" eventKey="monsters">
-            <Button
-              variant="primary"
-              onClick={() => {
-                this.handleModalOpen();
-              }}
-              style={{
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                display: 'block'
-              }}
-            >
-              Add Monster
-            </Button>
+          <Tabs
+            id="adminTabs"
+            activeKey={this.state.focusedTab}
+            onSelect={tab => this.setState({ focusedTab: tab })}
+          >
+            {/* Monsters tab */}
+            <Tab title="Monsters" eventKey="monsters">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  this.handleModalOpen();
+                }}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  display: 'block'
+                }}
+              >
+                Add Monster
+              </Button>
 
-            <MonstersContainer />
-          </Tab>
+              <MonstersContainer />
+            </Tab>
 
-          {/* Characters tab */}
-          <Tab title="Characters" eventKey="characters">
-            <CharactersContainer />
-          </Tab>
+            {/* Characters tab */}
+            <Tab title="Characters" eventKey="characters">
+              <CharactersContainer />
+            </Tab>
 
-          {/* Encounters tab */}
-          <Tab title="Encounters" eventKey="encounters">
-            <Button
-              variant="primary"
-              onClick={() => {
-                this.handleModalOpen();
-              }}
-              style={{
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                display: 'block'
-              }}
-            >
-              Add Encounter
-            </Button>
-            <EncountersContainer />
-          </Tab>
-        </Tabs>
+            {/* Encounters tab */}
+            <Tab title="Encounters" eventKey="encounters">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  this.handleModalOpen();
+                }}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  display: 'block'
+                }}
+              >
+                Add Encounter
+              </Button>
+              <EncountersContainer />
+            </Tab>
+          </Tabs>
 
-        <Modal
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          show={this.state.modalOpen}
-          onHide={this.handleModalClose}
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">
-              New {capitalizeFirstLetter(this.state.focusedTab)}
-            </Modal.Title>
-          </Modal.Header>
+          <Modal
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            show={this.state.modalOpen}
+            onHide={this.handleModalClose}
+            centered
+          >
+            <Modal.Header closeButton>
+              <Modal.Title id="contained-modal-title-vcenter">
+                New{' '}
+                {capitalizeFirstLetter(this.state.focusedTab).slice(
+                  0,
+                  this.state.focusedTab.length - 1
+                )}
+              </Modal.Title>
+            </Modal.Header>
 
-          <Modal.Body>{this.generateModalForm()}</Modal.Body>
-          <Modal.Footer />
-        </Modal>
-      </div>
+            <Modal.Body>{this.generateModalForm()}</Modal.Body>
+            <Modal.Footer />
+          </Modal>
+        </div>
+      </Container>
     );
   }
 }

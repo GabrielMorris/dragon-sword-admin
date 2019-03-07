@@ -2,48 +2,45 @@ import React, { Component } from 'react';
 import './App.css';
 
 // Routing
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
 // Components
-import { Container, Row } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 import Login from './components/auth/login';
 import Admin from './components/admin/admin';
 import requireAuth from './components/auth/require-auth';
 
-// TODO: move these
 import { connect } from 'react-redux';
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <Container>
-          <Row>
-            <nav role="navigation">
-              {/* TODO: move to a nav component */}
-              <Link to="/">
-                <span>Home</span>
-              </Link>
-              <Link to="/admin">
-                <span>Admin</span>
-              </Link>
-            </nav>
-          </Row>
+        <div>
+          <Navbar bg="light" variant="dark">
+            <LinkContainer to="/">
+              <Navbar.Brand href="/">DRAGON SWORD</Navbar.Brand>
+            </LinkContainer>
 
-          <main>
-            {/* END TODO:  */}
-            <Switch>
-              {/* Home route */}
-              {/* <Route path='/' exact component={}></Route> */}
+            <Navbar.Collapse className="justify-content-end">
+              <LinkContainer to="/admin">
+                <Nav.Link>Admin</Nav.Link>
+              </LinkContainer>
+            </Navbar.Collapse>
+          </Navbar>
 
-              {/* Login route */}
-              <Route path="/login" exact component={Login} />
+          <Switch>
+            {/* Home route */}
+            {/* <Route path='/' exact component={}></Route> */}
 
-              {/* Admin route */}
-              <Route path="/admin" exact component={requireAuth(Admin)} />
-            </Switch>
-          </main>
-        </Container>
+            {/* Login route */}
+            <Route path="/login" exact component={Login} />
+
+            {/* Admin route */}
+            <Route path="/admin" exact component={requireAuth(Admin)} />
+          </Switch>
+        </div>
       </Router>
     );
   }

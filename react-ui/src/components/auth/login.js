@@ -48,35 +48,37 @@ export class Login extends React.Component {
 
   render() {
     return (
-      <Row className="justify-content-md-center">
-        <Form onSubmit={this._handleSubmit}>
-          <Form.Group controlId="usernameControl">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="user"
-              placeholder="Username"
-              value={this.state.user}
-              onChange={this._handleChange}
-            />
-          </Form.Group>
+      <Container>
+        <Row className="justify-content-md-center">
+          <Form onSubmit={this._handleSubmit}>
+            <Form.Group controlId="usernameControl">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                name="user"
+                placeholder="Username"
+                value={this.state.user}
+                onChange={this._handleChange}
+              />
+            </Form.Group>
 
-          <Form.Group controlId="passwordControl">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={this.state.password}
-              onChange={this._handleChange}
-            />
-          </Form.Group>
+            <Form.Group controlId="passwordControl">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={this.state.password}
+                onChange={this._handleChange}
+              />
+            </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
-        </Form>
-      </Row>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Row>
+      </Container>
     );
   }
 }
