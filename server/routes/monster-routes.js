@@ -8,10 +8,12 @@ const monsters = require('../models/monster');
 const authMiddleware = require('../middleware/auth');
 
 // Routes
+// Get all monsters
 router.get('/', function(req, res) {
   monsters.find().then(monsters => res.send(monsters));
 });
 
+// Create a new monster
 router.post('/', authMiddleware, function(req, res) {
   // Find any monsters with the same name
   monsters.find({ name: req.body.name }).then(mongoDocs => {
