@@ -65,7 +65,7 @@ if (!isDev && cluster.isMaster) {
     app.use('/api/games', gameRouter);
     app.use('/api/encounters', encounterRouter);
     app.use('/api/login', authMiddleware, loginRouter);
-    app.use('/api/class', authMiddleware, classRouter);
+    app.use('/api/class', classRouter);
 
     // All remaining requests return the React app, so it can handle routing.
     app.get('*', function(request, response) {
