@@ -44,6 +44,7 @@ export default function CharacterCard(props) {
         <ListGroup.Item>XP: {props.character.experience}</ListGroup.Item>
         <ListGroup.Item>HP: {stats.HP}</ListGroup.Item>
         <ListGroup.Item>MP: {stats.MP}</ListGroup.Item>
+        <ListGroup.Item>STR: {stats.STR}</ListGroup.Item>
         <ListGroup.Item>DEF: {stats.DEF}</ListGroup.Item>
         <ListGroup.Item>AGI: {stats.AGI}</ListGroup.Item>
         <ListGroup.Item>LUCK: {stats.LUCK}</ListGroup.Item>
