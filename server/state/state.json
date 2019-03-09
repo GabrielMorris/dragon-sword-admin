@@ -24,11 +24,20 @@
     {
       "_id": "5c7718a31aea862dafab4a55",
       "guildID": "523227599103590421",
-      "monsterAlive": false,
+      "monsterAlive": true,
       "createdAt": "2019-02-27T23:09:23.376Z",
-      "updatedAt": "2019-03-09T22:08:03.205Z",
+      "updatedAt": "2019-03-09T22:09:59.265Z",
       "__v": 0,
-      "monster": null
+      "monster": {
+        "_id": "5c78dbd06297ff0d0faa9075",
+        "name": "Iron Eagle",
+        "health": 2,
+        "xpValue": 1,
+        "thumbnail": "https://i.imgur.com/Bucz3xA.png",
+        "description": "symbols of once great kingdoms, Iron Eagles have adorned many banners",
+        "outro": "May the gods grant you the rest you so deserve...",
+        "isBoss": false
+      }
     },
     {
       "_id": "5c77100733b2e02b5330c42a",
@@ -55,7 +64,7 @@
   "classes": [
     {
       "_id": "5c81ed2d533c384fe4a1543a",
-      "name": "hater",
+      "name": "crusader",
       "base": { "HP": 10, "MP": 0, "STR": 10, "DEF": 10, "AGI": 1, "LUCK": 1 },
       "growth": { "HP": 2, "MP": 0, "STR": 3, "DEF": 2, "AGI": 1, "LUCK": 1 },
       "isMage": false,
