@@ -2,6 +2,11 @@
 const express = require('express');
 const router = express.Router();
 
+// State
+const state = require('../state/state.json');
+const stateController = require('../state/state-controller');
+
+// Models
 const encounters = require('../models/encounter');
 
 // Auth
@@ -9,7 +14,9 @@ const authMiddleware = require('../middleware/auth');
 
 // Routes
 router.get('/', function(req, res) {
-  encounters.find().then(encounters => res.send(encounters));
+  stateController.getState(() => {
+    res.send(state.encounters);
+  });
 });
 
 router.post('/', authMiddleware, function(req, res) {

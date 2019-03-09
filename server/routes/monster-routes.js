@@ -2,6 +2,11 @@
 const express = require('express');
 const router = express.Router();
 
+// State
+const state = require('../state/state.json');
+const stateController = require('../state/state-controller');
+
+// Models
 const monsters = require('../models/monster');
 
 // Auth
@@ -10,7 +15,9 @@ const authMiddleware = require('../middleware/auth');
 // Routes
 // Get all monsters
 router.get('/', function(req, res) {
-  monsters.find().then(monsters => res.send(monsters));
+  stateController.getState(() => {
+    res.send(state.monsters);
+  });
 });
 
 // Create a new monster

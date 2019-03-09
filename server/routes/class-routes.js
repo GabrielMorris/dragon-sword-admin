@@ -2,22 +2,32 @@
 const express = require('express');
 const router = express.Router();
 
+// State
+const state = require('../state/state.json');
+const stateController = require('../state/state-controller');
+
+// Models
 const classes = require('../models/class');
 
 // Auth
 const authMiddleware = require('../middleware/auth');
 
 // Routes
-// Get all characters
 router.get('/', function(req, res) {
-  classes.find().then(classes => res.send(classes));
+  stateController.getState(() => {
+    res.send(state.classes);
+  });
 });
 
-// Create a new character
+// Create a new class
 router.post('/', authMiddleware, function(req, res) {
   classes
     .create(req.body)
-    .then(response => res.send(response))
+    .then(response => {
+      res.send(response);
+
+      stateController.getState();
+    })
     .catch(err => res.status(500).send({ error: true, message: err.message }));
 });
 

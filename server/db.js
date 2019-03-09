@@ -31,6 +31,7 @@ function getGameData(template, callback) {
       return callback('No games', null);
     }
 
+    console.log(games);
     template.games = games;
 
     Character.find().then(characters => {
@@ -61,6 +62,7 @@ function getGameData(template, callback) {
 
             template.monsters = monsters;
 
+            console.log('DOING ======== =====');
             callback(null, template);
           });
         });

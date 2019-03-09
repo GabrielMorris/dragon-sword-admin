@@ -2,6 +2,11 @@
 const express = require('express');
 const router = express.Router();
 
+// State
+const state = require('../state/state.json');
+const stateController = require('../state/state-controller');
+
+// Models
 const characters = require('../models/character');
 
 const discord = require('../discord');
@@ -11,34 +16,13 @@ const { capitalizeFirstLetter } = require('../utils/utils');
 
 // Routes
 router.get('/', function(req, res) {
-  characters.find().then(chars => {
+  stateController.getState(() => {
     // Create an array to hold characters that are merged with Discord usernames
-    const characterArray = [];
+    const charactersArray = [];
 
     // For every character get the user's current Discord username
-    chars.forEach(char => {
-      // I don't know why this is necessary but it sends some goddamn mongo document if I don't so...
-      const {
-        guildID,
-        memberID,
-        experience,
-        health,
-        mana,
-        pronouns,
-        gold
-      } = char;
+    state.characters.forEach(char => {
       const className = char.class;
-
-      const charObj = {
-        guildID,
-        memberID,
-        experience,
-        health,
-        mana,
-        pronouns,
-        gold,
-        class: className
-      };
 
       // Get the guild of the character
       const guild = discord.guilds.find(guild => guild.id === char.guildID);
@@ -47,24 +31,23 @@ router.get('/', function(req, res) {
       const guildName = guild.name;
 
       // Add the guild's name to the character object
-      charObj.guildName = guildName;
+      char.guildName = guildName;
 
-      // Get the member snowflake for the plaayer
+      // Get the member snowflake for the player
       const member = guild.members.find(member => member.id === char.memberID);
 
       // Add the username to the character object
-      charObj.username = member.user.username;
+      char.username = member.user.username;
 
       // Capitalize the class name and pronouns
-      charObj.class = capitalizeFirstLetter(className);
-      charObj.pronouns = capitalizeFirstLetter(pronouns);
+      char.class = capitalizeFirstLetter(className);
+      char.pronouns = capitalizeFirstLetter(char.pronouns);
 
       // Push the modified character object with the username into the character array
-      characterArray.push(charObj);
+      charactersArray.push(char);
     });
 
-    // Send the new character array to the client
-    res.send(characterArray);
+    res.send(charactersArray);
   });
 });
 
