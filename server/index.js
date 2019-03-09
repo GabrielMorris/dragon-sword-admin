@@ -24,6 +24,8 @@ const encounterRouter = require('./routes/encounter-routes');
 const loginRouter = require('./routes/login-routes');
 const classRouter = require('./routes/class-routes');
 
+const testRouter = require('./routes/test-chars-routes');
+
 const isDev = process.env.NODE_ENV !== 'production';
 const PORT = process.env.PORT || 5000;
 
@@ -66,6 +68,8 @@ if (!isDev && cluster.isMaster) {
     app.use('/api/encounters', encounterRouter);
     app.use('/api/login', authMiddleware, loginRouter);
     app.use('/api/class', classRouter);
+
+    app.use('/api/test', testRouter);
 
     // All remaining requests return the React app, so it can handle routing.
     app.get('*', function(request, response) {
