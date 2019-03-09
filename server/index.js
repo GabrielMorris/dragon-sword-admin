@@ -10,6 +10,9 @@ require('dotenv').config();
 // DB
 const dbUtils = require('./db');
 
+// State controller
+const stateController = require('./state/state-controller');
+
 // Discord
 const discord = require('./discord');
 
@@ -49,6 +52,24 @@ if (!isDev && cluster.isMaster) {
   // When KatBot is signed into
   discord.on('ready', () => {
     console.log('Discord connected');
+
+    stateController.getState();
+
+    // setTimeout(() => {
+    //   stateController.updateState('classes', {
+    //     _id: '5c81ed2d533c384fe4a1543a',
+    //     name: 'hater',
+    //     base: { HP: 10, MP: 0, STR: 10, DEF: 10, AGI: 1, LUCK: 1 },
+    //     growth: { HP: 2, MP: 0, STR: 3, DEF: 2, AGI: 1, LUCK: 1 },
+    //     isMage: false,
+    //     description:
+    //       "An iron will bound to unshakeable resolve, the Crusader's oath once given is never broken. A veteran of many wars, they seek to purify this land from the Taint.",
+    //     thumbnail: 'https://i.imgur.com/OQ3PN4B.png',
+    //     createdAt: '2019-03-08T04:18:53.697Z',
+    //     updatedAt: '2019-03-08T04:18:53.697Z',
+    //     __v: 0
+    //   });
+    // }, 5000);
 
     const app = express();
 
