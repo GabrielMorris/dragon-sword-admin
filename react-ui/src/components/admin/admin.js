@@ -37,6 +37,7 @@ export class Admin extends React.Component {
       description: '',
       outro: '',
       boss: false,
+      damage: '',
       // TODO: move these to the encounter modal
       text: ''
     };

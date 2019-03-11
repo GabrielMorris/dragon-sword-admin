@@ -16,16 +16,18 @@ export function NewMonsterForm(props) {
 
         const health = Number(props.state.HP);
         const xpValue = Number(props.state.xpValue);
+        const damage = Number(props.state.damage);
         const isBoss = props.state.boss === 'true';
 
         const monsterObj = {
           name: props.state.name,
-          health: health,
+          health,
+          damage,
           xpValue: xpValue,
           thumbnail: props.state.thumbnail,
           description: props.state.description,
           outro: props.state.outro,
-          isBoss: isBoss
+          isBoss
         };
 
         const user = {
@@ -56,6 +58,17 @@ export function NewMonsterForm(props) {
           name="HP"
           placeholder="HP"
           value={props.state.HP}
+          onChange={props.handleChange}
+          required
+        />
+
+        {/* Damage */}
+        <Form.Label>Damage</Form.Label>
+        <Form.Control
+          type="text"
+          name="damage"
+          placeholder="Damage"
+          value={props.state.damage}
           onChange={props.handleChange}
           required
         />

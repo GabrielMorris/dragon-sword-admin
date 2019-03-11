@@ -29,6 +29,10 @@ export default function MonsterCard(props) {
       <ListGroup>
         <ListGroup.Item>HP: {props.monster.health}</ListGroup.Item>
         <ListGroup.Item>XP value: {props.monster.xpValue}</ListGroup.Item>
+        <ListGroup.Item>Damage: {props.monster.damage}</ListGroup.Item>
+        <ListGroup.Item>
+          Is boss?: {props.monster.isBoss ? 'true' : 'false'}
+        </ListGroup.Item>
         <ListGroup.Item>
           Description: {capitalizeFirstLetter(props.monster.description)}
         </ListGroup.Item>
